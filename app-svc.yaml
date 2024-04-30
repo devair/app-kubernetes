@@ -1,0 +1,14 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: pedidos-svc
+  labels:
+    app: pedidos-app
+spec:
+  type: LoadBalancer
+  selector:
+    app: pedidos-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3333

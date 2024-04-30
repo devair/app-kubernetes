@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pedidos-app
+  labels:
+    app: pedidos-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pedidos-app
+  template:
+    metadata:
+      labels:
+        app: pedidos-app
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: kubernetes.io/arch
+                operator: In
+                values:
+                - amd64
+                - arm64
+      containers:
+      - name: node-app
+        image: devatron/tc-2023-repo:latest
+        env:
+          - name: DB_HOST
+            value: "postgres-svc"
+          - name: DB_PORT
+            value: "5432"
+          - name: DB_USER
+            value: "docker"
+          - name: DB_PASS
+            value: "docker998877"
+          - name: DB_DATABASE
+            value: "pedidos_db"
+
+        resources:
+            requests:
+              cpu: 500m
+              memory: 1024Mi
+            limits:
+              cpu: 2000m
+              memory: 2048Mi
+        ports:
+        - name: http
+          containerPort: 80
+        imagePullPolicy: IfNotPresent
+      nodeSelector:
+        kubernetes.io/os: linux
