@@ -9,34 +9,3 @@ data:
   POSTGRES_DB: pedidos_db
   POSTGRES_PASSWORD: docker998877  
 
----
-kind: PersistentVolume
-apiVersion: v1
-metadata:
-  name: postgres-pv
-  labels:
-    type: local
-    app: postgres-db
-spec:
-  storageClassName: manual
-  capacity:
-    storage: 10Gi
-  accessModes:
-    - ReadWriteMany
-  hostPath:
-    path: /data/postgresql
-
----
-kind: PersistentVolumeClaim
-apiVersion: v1
-metadata:
-  name: postgres-pvc
-  labels:
-    app: postgres-db
-spec:
-  storageClassName: manual
-  accessModes:
-    - ReadWriteMany
-  resources:
-    requests:
-      storage: 10Gi    
