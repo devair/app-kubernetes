@@ -26,26 +26,10 @@ spec:
                 - arm64
       containers:
       - name: node-app
-        image: devatron/tc-2023-repo:latest
-        env:
-          - name: DB_HOST
-            value: "postgres-svc"
-          - name: DB_PORT
-            value: "5432"
-          - name: DB_USER
-            value: "docker"
-          - name: DB_PASS
-            value: "docker998877"
-          - name: DB_DATABASE
-            value: "pedidos_db"
-
-        resources:
-            requests:
-              cpu: 500m
-              memory: 1024Mi
-            limits:
-              cpu: 2000m
-              memory: 2048Mi
+        image: devatron/tc-2023-repo:latest        
+        envFrom:
+          - configMapRef:
+              name: app-cm      
         ports:
         - name: http
           containerPort: 80

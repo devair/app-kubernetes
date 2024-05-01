@@ -4,8 +4,7 @@ metadata:
   name: postgres-cm
   labels:
     app: postgres-cm
-data:
+data:  
   POSTGRES_USER: docker
   POSTGRES_DB: pedidos_db
-  POSTGRES_PASSWORD: docker998877  
-
+  POSTGRES_PASSWORD: docker123  

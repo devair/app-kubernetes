@@ -1,0 +1,12 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: app-cm
+  labels:
+    app: app-cm
+data:  
+  DB_DATABASE: pedidos_db
+  DB_HOST: postgres-svc
+  DB_PASS: docker123
+  DB_PORT: "5432"
+  DB_USER: docker

@@ -1,10 +1,12 @@
 apiVersion: apps/v1
-kind: StatefulSet
+kind: Deployment
 metadata:
   name: postgres-db
+  labels:
+    app: postgres-db
+
 spec:
   replicas: 1
-  serviceName: postgres-db
   selector:
     matchLabels:
       app: postgres-db
@@ -13,26 +15,17 @@ spec:
       labels:
         app: postgres-db
     spec:
-      terminationGracePeriodSeconds: 5
       containers:
         - name: postgres-db
-          image: postgres:13
-          imagePullPolicy: "IfNotPresent"
+          image: postgres:latest
           ports:
             - containerPort: 5432
           envFrom:
             - configMapRef:
                 name: postgres-cm
           volumeMounts:
-            - mountPath: /var/lib/postgresql/data
-              name: postgresdata       
-          resources:
-            requests:
-              memory: "64Mi"
-              cpu: "250m"
-            limits:
-              memory: "128Mi"
-              cpu: "500m"
+            - name: postgresdata
+              mountPath: /var/lib/data
       volumes:
         - name: postgresdata
           persistentVolumeClaim:
