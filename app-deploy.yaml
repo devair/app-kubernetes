@@ -5,7 +5,6 @@ metadata:
   labels:
     app: pedidos-app
 spec:
-  replicas: 1
   selector:
     matchLabels:
       app: pedidos-app
@@ -14,25 +13,32 @@ spec:
       labels:
         app: pedidos-app
     spec:
-      affinity:
-        nodeAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            nodeSelectorTerms:
-            - matchExpressions:
-              - key: kubernetes.io/arch
-                operator: In
-                values:
-                - amd64
-                - arm64
       containers:
       - name: node-app
-        image: devatron/tc-2023-repo:latest        
-        envFrom:
-          - configMapRef:
-              name: app-cm      
-        ports:
-        - name: http
-          containerPort: 80
-        imagePullPolicy: IfNotPresent
-      nodeSelector:
-        kubernetes.io/os: linux
+        image: devatron/tc-2023-repo:latest
+        # ... other container configuration
+        env:
+        - name: DB_PORT
+          value: "5432"
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secret
+              key: username
+        - name: DB_PASS
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secret
+              key: password
+        - name: DB_DATABASE
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secret
+              key: database
+        # [START cloud_sql_proxy_secret_host]
+        - name: DB_HOST
+          valueFrom:
+            secretKeyRef:
+              name: postgres-private-ip
+              key: db_host
+        # [END cloud_sql_proxy_secret_host]
