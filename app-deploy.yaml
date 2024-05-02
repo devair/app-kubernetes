@@ -19,21 +19,24 @@ spec:
         # ... other container configuration
         env:
         - name: DB_PORT
-          value: "5432"
+          valueFrom:
+            secretKeyRef:
+              name: dbport
+              key: port
         - name: DB_USER
           valueFrom:
             secretKeyRef:
-              name: postgres-secret
+              name: dbusername
               key: username
         - name: DB_PASS
           valueFrom:
             secretKeyRef:
-              name: postgres-secret
+              name: dbpassword
               key: password
         - name: DB_DATABASE
           valueFrom:
             secretKeyRef:
-              name: postgres-secret
+              name: dbname
               key: database
         # [START cloud_sql_proxy_secret_host]
         - name: DB_HOST
