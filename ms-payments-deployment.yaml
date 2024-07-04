@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ms-payments-service
+spec:  
+  selector:
+    matchLabels:
+      app: ms-payments-service
+  template:
+    metadata:
+      labels:
+        app: ms-payments-service
+    spec:
+      containers:
+      - name: ms-payments-service
+        image: devatron/ms-payments-service:latest
+
+        # ... other container configuration
+        env:
+        - name: APP_PORT
+          valueFrom:
+            secretKeyRef:
+              name: payment-port
+              key: port
+        - name: DB_DATABASE
+          valueFrom:
+            secretKeyRef:
+              name: payment-database
+              key: database
+        - name: MONGO_URI
+          valueFrom:
+            secretKeyRef:
+              name: payment-mongo-uri
+              key: mongo-uri
+        - name: ORDERS_URI
+          valueFrom:
+            secretKeyRef:
+              name: orders-uri
+              key: orders-uri        
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ms-payments-service-svc
+spec:
+  type: LoadBalancer
+  selector:
+    app: ms-payments-service
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3334

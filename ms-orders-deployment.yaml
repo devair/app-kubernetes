@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ms-orders-service
+spec:  
+  selector:
+    matchLabels:
+      app: ms-orders-service
+  template:
+    metadata:
+      labels:
+        app: ms-orders-service
+    spec:
+      containers:
+      - name: ms-orders-service
+        image: devatron/ms-orders-service:latest      
+        # ... other container configuration
+        env:
+        - name: DB_PORT
+          valueFrom:
+            secretKeyRef:
+              name: dbport
+              key: port
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: dbusername
+              key: username
+        - name: DB_PASS
+          valueFrom:
+            secretKeyRef:
+              name: dbpassword
+              key: password
+        - name: DB_DATABASE
+          valueFrom:
+            secretKeyRef:
+              name: dbname
+              key: database
+        # [START cloud_sql_proxy_secret_host]
+        - name: DB_HOST
+          valueFrom:
+            secretKeyRef:
+              name: postgres-private-ip
+              key: db_host
+        # [END cloud_sql_proxy_secret_host]
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ms-orders-service-svc
+spec:
+  type: LoadBalancer
+  selector:
+    app: ms-orders-service
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3333
