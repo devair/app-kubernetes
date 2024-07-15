@@ -16,6 +16,11 @@ spec:
         image: devatron/ms-orders-service:latest      
         # ... other container configuration
         env:
+        - name: APP_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: ms-orders-service-config-map
+              key: APP_PORT           
         - name: DB_PORT
           valueFrom:
             secretKeyRef:
