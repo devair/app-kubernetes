@@ -1,63 +1,52 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: ms-orders-service
+  name: ms-payments-service
 spec:  
   selector:
     matchLabels:
-      app: ms-orders-service
+      app: ms-payments-service
   template:
     metadata:
       labels:
-        app: ms-orders-service
-    spec:
+        app: ms-payments-service
+    spec:      
       containers:
-      - name: ms-orders-service
-        image: devatron/ms-orders-service:latest      
+      - name: ms-payments-service
+        image: devatron/ms-payments-service:latest
+
         # ... other container configuration
         env:
         - name: APP_PORT
           valueFrom:
-            configMapKeyRef:
-              name: ms-orders-service-config-map
-              key: APP_PORT           
-        - name: DB_PORT
-          valueFrom:
             secretKeyRef:
-              name: dbport
+              name: payment-port
               key: port
-        - name: DB_USER
-          valueFrom:
-            secretKeyRef:
-              name: dbusername
-              key: username
-        - name: DB_PASS
-          valueFrom:
-            secretKeyRef:
-              name: dbpassword
-              key: password
         - name: DB_DATABASE
           valueFrom:
             secretKeyRef:
-              name: dbname
+              name: payment-database
               key: database
-        # [START cloud_sql_proxy_secret_host]
-        - name: DB_HOST
+        - name: MONGO_URI
           valueFrom:
             secretKeyRef:
-              name: postgres-private-ip
-              key: db_host
-        # [END cloud_sql_proxy_secret_host]
+              name: payment-mongo-uri
+              key: mongo-uri
+        - name: ORDERS_URI
+          valueFrom:
+            configMapKeyRef:
+              name: ms-orders-service-config-map
+              key: ORDERS_URI       
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: ms-orders-service-svc
+  name: ms-payments-service-svc
 spec:
-  type: LoadBalancer
+  type: LoadBalancer  
   selector:
-    app: ms-orders-service
+    app: ms-payments-service
   ports:
     - protocol: TCP
       port: 80
-      targetPort: 3333
+      targetPort: 3334
