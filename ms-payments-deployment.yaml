@@ -10,7 +10,7 @@ spec:
     metadata:
       labels:
         app: ms-payments-service
-    spec:
+    spec:      
       containers:
       - name: ms-payments-service
         image: devatron/ms-payments-service:latest
@@ -34,16 +34,16 @@ spec:
               key: mongo-uri
         - name: ORDERS_URI
           valueFrom:
-            secretKeyRef:
-              name: orders-uri
-              key: orders-uri        
+            configMapKeyRef:
+              name: ms-orders-service-config-map
+              key: ORDERS_URI       
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: ms-payments-service-svc
 spec:
-  type: LoadBalancer
+  type: LoadBalancer  
   selector:
     app: ms-payments-service
   ports:
